@@ -42,3 +42,9 @@ export function makeMove(board: Board, position: string, player: string): boolea
     board[pos] = player;
     return true;
 }
+
+export function getAvailableMoves(board: Board): string[]{
+    return board
+    .map((cell, index) => (cell === " " ? (index + 1).toString() : null))
+    .filter((cell): cell is string => cell !== null);
+}

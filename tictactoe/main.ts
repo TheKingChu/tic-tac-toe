@@ -1,26 +1,35 @@
-import { createBoard, printBoard, makeMove, checkWinner } from './game.ts';
+import { createBoard, printBoard, makeMove, checkWinner, getAvailableMoves } from './game.ts';
 import { prompt } from './utils.ts';
 
 async function main(){
   let playAgain = true;
 
   while (playAgain){
+    console.log("Welcome to Tic Tac Toe!");
+    const mode = await prompt("Choose mode: 1 for single player, 2 for multi player: ");
+    const isSinglePlayer = mode.trim() === "1";
+
     const board = createBoard();
     let currentPlayer = 'X';
     let winner = null;
     let moves = 0;
 
-    console.log("Welcome to Tic Tac Toe!");
     printBoard(board);
 
     while(!winner && moves < 9){
-      const position = await prompt(
-        `Player ${currentPlayer}, enter a position (1-9): `
-      );
-
-      if(!makeMove(board, position, currentPlayer)){
-        console.log("Invalid move, try again.");
-        continue;
+      if(isSinglePlayer && currentPlayer === 'O'){
+        console.log("AI is making its move...");
+        const aiMove = getAIMove(board);
+        makeMove(board, aiMove, 'O');
+      }
+      else{
+        const position = await prompt(
+          `Player ${currentPlayer}, enter a position (1-9): `
+        );
+        if(!makeMove(board, position, currentPlayer)){
+          console.log("Invalid move, try again.");
+          continue;
+        }
       }
 
       moves++;
@@ -44,6 +53,12 @@ async function main(){
   }
 
   console.log("Thanks for playing");
+}
+
+function getAIMove(board: string[]): string{
+  const availableMoves = getAvailableMoves(board);
+  const bestMove = availableMoves[Math.floor(Math.random() * availableMoves.length)];
+  return bestMove;
 }
 
 main();
